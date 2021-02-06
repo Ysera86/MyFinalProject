@@ -1,0 +1,15 @@
+﻿using Entities.Abstract;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Entities.DTOs
+{
+    public class ProductDetailDTO : IDTO
+    {
+        public int ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string Categoryname { get; set; }
+        public short UnitsInStock { get; set; }
+    }
+}
