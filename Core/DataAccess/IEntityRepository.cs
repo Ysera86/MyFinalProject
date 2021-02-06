@@ -1,10 +1,10 @@
-﻿using Entities.Abstract;
+﻿using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace DataAccess.Abstract
+namespace Core.DataAccess
 {
     // generic constraint
     // T herşey olmamalı , entitiy yani db nesnesi olmalı :  IEntity :  IEntity ve ya IEntity implement olan bir nesne olabilir
