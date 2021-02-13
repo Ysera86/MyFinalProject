@@ -11,6 +11,8 @@ using System.Text;
 
 namespace Business.Concrete
 {
+    //[LogAspect] --> AOP // örn. classı logla,  yeni method ekleyince ona bu attr ekledim mi eklemedm mi düşünmeye gerek kalmaz
+
     // Bir iş sınıfı diğer sınıfları new lemez! Injection yap!
     public class ProductManager : IProductService
     {
@@ -21,6 +23,11 @@ namespace Business.Concrete
             _productDAL = productDAL; // Injection > burada asla InMemory, eF vs tipler olmaz!!
         }
 
+        //[LogAspect] --> AOP
+        //[Validate]
+        //[RemoveCache]
+        //[Transaction] // örn. hata olursa geri al
+        //[Performance] // örn. çalışması 5sn geçerse uyar
         public IResult Add(Product product)
         {
             // Business  codes
@@ -35,6 +42,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded);
         }
 
+        //[Cache]
         public IDataResult<List<Product>> GetAll()
         {
             // İş Kodları

@@ -31,6 +31,11 @@ namespace WebAPI
         {
             services.AddControllers();
 
+            // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryInject --> IoC Container
+            // AOP : 1 methodun önünde, sonunda ve ya hata verdiðinde ve ya ne zaman dersen çalýþan kod parçacýklarýný AOP ile yazarýz :  Bu durumda da .NET IoC yeterli olmayabiliyor, yukardakilerden birine ,htiyaç duyabiliyoruz
+            // --> ProductManager içinde attrþbute notlarý
+            // Autofac bize AOP sunuyor!
+
             // Bana arkaplanda referans oluþtur yani newle : 
             // birisi senden ctorda IProductServiceisterse onu ProductManager ile newle 
             // tüm bellekte 1 tane ProductManager oluþturup her isteyene tek 1 tane ProductManager veriyor.
