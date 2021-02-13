@@ -26,14 +26,55 @@ namespace WebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
-        public List<Product> Get()
+        [HttpGet("getall")]
+        //public List<Product> Get()
+        public IActionResult GetAll()
         {
+            //Swagger
             //Dependency chain...
             //IProductService productService = new ProductManager(new EfProductDAL());
             var result = _productService.GetAll();
             //return result.Message; // saar 23ise ProductManager içinde bakım yapılyor mesajı
-            return result.Data;
+            //return result.Data;
+
+            if (result.Success)
+            {
+                //return Ok(result.Data);
+                return Ok(result);
+            }
+            else
+            {
+                //return BadRequest(result.Message);
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPost("add")]
+        // put : update
+        // delete : delete
+        // >> kullanılabilecekleri gibi sektörde %90 bunlar için de  post kullanılabiliyormuş.
+        public IActionResult Add(Product product)
+        {
+            var result = _productService.Add(product);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpGet("getbyid")]
+        public IActionResult GetById(int id)
+        {
+            var result = _productService.GetById(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
