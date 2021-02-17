@@ -12,5 +12,7 @@ namespace Business.Contants
         public static string MaintenanceTime = "Sistemde bakım yapılıyor";
         public static string ProductsListed = "Ürünler listelendi";
         public static string ProductListed = "Ürün listelendi";
+
+        public static string UnitPriceInvalid = "Birim fiyat geçersiz";
     }
 }

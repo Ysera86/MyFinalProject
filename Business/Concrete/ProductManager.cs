@@ -1,10 +1,14 @@
 ﻿using Business.Abstract;
 using Business.Contants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,18 +29,46 @@ namespace Business.Concrete
 
         //[LogAspect] --> AOP
         //[Validate]
+        [ValidationAspect(typeof(ProductValidator))]
         //[RemoveCache]
         //[Transaction] // örn. hata olursa geri al
         //[Performance] // örn. çalışması 5sn geçerse uyar
         public IResult Add(Product product)
         {
-            // Business  codes
-            if (product.ProductName.Length < 2)
-            {
-                // magic string : öyle elle metinsel standardı olmayan şeyler
-                // return new ErrorResult("Ürün ismi en az 2 karakter olmalıdır");
-                return new ErrorResult(Messages.ProductNameInvalid);
-            }
+            // Business  codes  
+            // Validation  
+            // üst 2si AYRI olmalı!
+
+            // fluent validation ile bu doğrulamaları yapıp burdan kaldırıcaz. :  product.UnitPrice <= 0, product.ProductName.Length < 2 vs hep validation 
+            // Business. add folder : ValidationRules :  ProductValidator yazdık.. Aşağıyı kapat.
+            ////if (product.UnitPrice <= 0)
+            ////{
+            ////    return new ErrorResult(Messages.UnitPriceInvalid);
+            ////}
+
+            ////if (product.ProductName.Length < 2)
+            ////{
+            ////    // magic string : öyle elle metinsel standardı olmayan şeyler
+            ////    // return new ErrorResult("Ürün ismi en az 2 karakter olmalıdır");
+            ////    return new ErrorResult(Messages.ProductNameInvalid);
+            ////}
+            ///
+            //var context = new ValidationContext<Product>(product);
+            //ProductValidator productValidator = new ProductValidator();
+            //var result = productValidator.Validate(context);
+            //if (!result.IsValid)
+            //{
+            //    throw new ValidationException(result.Errors);
+            //}
+            // üsttekinin yerine
+            //ValidationTool.Validate(new ProductValidator(), product); // 1e1 aynı anlam attribute artık :   [ValidationAspect(typeof(ProductValidator)]
+            // Loglama
+            // Cacheremove
+            // performance
+            // transaction
+            // authorization
+            //...... > bunlar iş mantığı değil.. buraya eklenirlerse de burası ÇORBA : AOP> attribute ekleyerek!!örn. method üstüne    [ValidationAspect(typeof(ProductValidator)]
+
             _productDAL.Add(product);
 
             return new SuccessResult(Messages.ProductAdded);

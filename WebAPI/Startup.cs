@@ -32,16 +32,21 @@ namespace WebAPI
             services.AddControllers();
 
             // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryInject --> IoC Container
-            // AOP : 1 methodun önünde, sonunda ve ya hata verdiðinde ve ya ne zaman dersen çalýþan kod parçacýklarýný AOP ile yazarýz :  Bu durumda da .NET IoC yeterli olmayabiliyor, yukardakilerden birine ,htiyaç duyabiliyoruz
+            // AOP : 1 methodun önünde, sonunda ve ya hata verdiðinde ve ya ne zaman dersen çalýþan kod parçacýklarýný AOP ile yazarýz :  Bu durumda da .NET IoC yeterli olmayabiliyor, yukardakilerden birine ihtiyaç duyabiliyoruz
             // --> ProductManager içinde attrþbute notlarý
-            // Autofac bize AOP sunuyor!
+            // Autofac bize AOP de sunuyor! > ücretsiz
+            // Postsharp ücretli 
 
             // Bana arkaplanda referans oluþtur yani newle : 
             // birisi senden ctorda IProductServiceisterse onu ProductManager ile newle 
             // tüm bellekte 1 tane ProductManager oluþturup her isteyene tek 1 tane ProductManager veriyor.
             // içerisinde Data tutmuyorsak singleton kullanýrýz !!!
-            services.AddSingleton<IProductService,ProductManager>();
-            services.AddSingleton<IProductDAL, EfProductDAL>();
+
+            //services.AddSingleton<IProductService,ProductManager>();
+            //services.AddSingleton<IProductDAL, EfProductDAL>();
+
+            // bu iþlem aslýnda burda olmamalý daha geride olmalý. Autofac yapýcaz : business manage nuget packages: autofac ve autofac.extras.dynamicproxy> add folder : DependencyResolvers
+            // aervices.AddSingleton kýsmýný kapat, Program.cs .UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer... 2 satýrý ekle
 
             // data lý olanlar.
             //services.AddScoped
