@@ -2,6 +2,7 @@
 using Business.Contants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Business;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -11,6 +12,7 @@ using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -21,10 +23,13 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDAL _productDAL;
+        ICategoryService _categoryService;
 
-        public ProductManager(IProductDAL productDAL)
+       
+        public ProductManager(IProductDAL productDAL, ICategoryService categoryService)
         {
-            _productDAL = productDAL; // Injection > burada asla InMemory, eF vs tipler olmaz!!
+            _productDAL = productDAL;  // Injection > burada asla InMemory, eF vs tipler olmaz!!
+            _categoryService = categoryService;
         }
 
         //[LogAspect] --> AOP
@@ -69,9 +74,60 @@ namespace Business.Concrete
             // authorization
             //...... > bunlar iş mantığı değil.. buraya eklenirlerse de burası ÇORBA : AOP> attribute ekleyerek!!örn. method üstüne    [ValidationAspect(typeof(ProductValidator)]
 
+            IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId), CheckIfProductNameExists(product.ProductName));
+            if (result != null)
+            {
+                return result;
+            }
             _productDAL.Add(product);
 
             return new SuccessResult(Messages.ProductAdded);
+        }
+
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Update(Product product)
+        {
+            // kategori sayısı 15i aştıysa ürün eklenemesin
+            IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId), 
+                CheckIfProductNameExists(product.ProductName),
+                CheckIfCategoryCountExceeds());
+            if (result != null)
+            {
+                return result;
+            }
+            _productDAL.Update(product);
+
+            return new SuccessResult(Messages.Updated);
+        }
+
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
+        {
+            var productsByCategory = _productDAL.GetAll(p => p.CategoryId == categoryId);
+            if (productsByCategory.Count >= 10)
+            {
+                return new ErrorResult(Messages.ProductCountOfcategoryError);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfProductNameExists(string productName)
+        {
+            var result = _productDAL.GetAll(p => p.ProductName == productName).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfCategoryCountExceeds()
+        {
+            var result = _categoryService.GetAll().Data.Count;
+            if (result >= 15)
+            {
+                return new ErrorResult(Messages.CategoryCountExceeds);
+            }
+            return new SuccessResult();
         }
 
         //[Cache]
@@ -122,5 +178,6 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<ProductDetailDTO>>(_productDAL.GetProductDetails());
         }
+
     }
 }
