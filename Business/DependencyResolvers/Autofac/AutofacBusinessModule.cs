@@ -23,6 +23,8 @@ namespace Business.DependencyResolvers.Autofac
             // tüm bellekte 1 tane ProductManager oluşturup her isteyene tek 1 tane ProductManager veriyor.
             builder.RegisterType<ProductManager>().As<IProductService>().SingleInstance(); 
             builder.RegisterType<EfProductDAL>().As<IProductDAL>().SingleInstance();
+            builder.RegisterType<CategoryManager>().As<ICategoryService>().SingleInstance();
+            builder.RegisterType<EfCategoryDAL>().As<ICategoryDAL>().SingleInstance();
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
