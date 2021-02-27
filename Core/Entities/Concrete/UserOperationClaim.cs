@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Entitites.Concrete
+namespace Core.Entities.Concrete
 {
     public class UserOperationClaim : IEntity
     {

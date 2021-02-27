@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
-using Business.Contants;
+using Business.BusinessAspects.Autofac;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
@@ -34,7 +35,7 @@ namespace Business.Concrete
 
 
         //Claim
-        //[SecuredOperation("product.add,admin")] // product.add ve ya admin yetkilerine sahip olanlar 
+        [SecuredOperation("product.add,admin")] // product.add ve ya admin yetkilerine sahip olanlar 
         //[LogAspect] --> AOP
         //[Validate]
         [ValidationAspect(typeof(ProductValidator))]
