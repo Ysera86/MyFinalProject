@@ -1,15 +1,23 @@
 using Business.Abstract;
 using Business.Concrete;
+using Core.DependencyResolvers;
+using Core.Extensions;
+using Core.Utilities.IoC;
+using Core.Utilities.Security.Encryption;
+using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +38,38 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Core a taþýdýk. > DependencyResolvers.CoreModule
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            #region JWTBearer Token kullanýcaz dediðimiz yer burasý
+
+            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = tokenOptions.Issuer,
+                        ValidAudience = tokenOptions.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+                    };
+                });
+
+            // geçici çözümdü yerine alttaki
+            //ServiceTool.Create(services);
+
+            services.AddDependencyResolvers(new ICoreModule[] 
+            { 
+                new CoreModule()
+            });
+
+            #endregion
 
             // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryInject --> IoC Container
             // AOP : 1 methodun önünde, sonunda ve ya hata verdiðinde ve ya ne zaman dersen çalýþan kod parçacýklarýný AOP ile yazarýz :  Bu durumda da .NET IoC yeterli olmayabiliyor, yukardakilerden birine ihtiyaç duyabiliyoruz
@@ -64,6 +104,9 @@ namespace WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //ekledik.
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
