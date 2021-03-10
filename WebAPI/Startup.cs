@@ -42,6 +42,8 @@ namespace WebAPI
             // Core a taþýdýk. > DependencyResolvers.CoreModule
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddCors();  // cors injection
+
             #region JWTBearer Token kullanýcaz dediðimiz yer burasý
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
@@ -94,12 +96,14 @@ namespace WebAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) // Burada sýralama önemli
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder => builder.WithOrigins("http://localhost:4200","http://localhost:53487").AllowAnyHeader());
 
             app.UseHttpsRedirection();
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -30,6 +31,9 @@ namespace WebAPI.Controllers
         //public List<Product> Get()
         public IActionResult GetAll()
         {
+            // angular kısmında dataLoaded için spinner ekledik. görmek için bunu ekledik
+            Thread.Sleep(5000);
+
             //Swagger
             //Dependency chain...
             //IProductService productService = new ProductManager(new EfProductDAL());
